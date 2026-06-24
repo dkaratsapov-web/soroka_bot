@@ -1,0 +1,30 @@
+# systemd-сервис для запуска бота 24/7 на VPS (без Docker).
+#
+# Установка:
+#   1) Склонируйте проект на сервер, например в /opt/leadmagnet-bot
+#   2) Внутри: bash setup.sh  (создаст venv и .env), заполните .env
+#   3) sudo cp deploy/leadmagnet-bot.service /etc/systemd/system/
+#      При необходимости поправьте User и пути ниже под свой сервер.
+#   4) sudo systemctl daemon-reload
+#      sudo systemctl enable --now leadmagnet-bot
+#   5) Логи:    journalctl -u leadmagnet-bot -f
+#      Рестарт: sudo systemctl restart leadmagnet-bot
+
+[Unit]
+Description=Telegram lead-magnet bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Под каким пользователем крутить бота (не root). Создайте при необходимости.
+User=botuser
+WorkingDirectory=/opt/leadmagnet-bot
+# .env читается systemd напрямую и пробрасывается в окружение процесса.
+EnvironmentFile=/opt/leadmagnet-bot/.env
+ExecStart=/opt/leadmagnet-bot/venv/bin/python /opt/leadmagnet-bot/leadmagnet_bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

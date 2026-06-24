@@ -10,7 +10,8 @@
 ## Текущий статус
 - ✅ **Telegram-бот готов** — `leadmagnet_bot.py` (фреймворк aiogram 3.x).
   Логика: `/start` → проверка подписки через `getChatMember` → выдача материала.
-- ⬜ Деплой (запуск 24/7) — не сделан.
+- 🟡 Деплой (запуск 24/7) — артефакты готовы (Docker + systemd, см. `DEPLOY.md`),
+  осталось запустить на хосте с доступом к Telegram.
 - ⬜ MAX-версия — не начата (есть важные ограничения, см. ниже).
 
 ## Файлы
@@ -18,6 +19,9 @@
 - `.env.example` — шаблон переменных окружения. Реальный `.env` создаётся при настройке.
 - `requirements.txt` — зависимости (`aiogram`, `python-dotenv`).
 - `setup.sh` — первичная настройка (venv + зависимости + создание `.env`).
+- `Dockerfile`, `docker-compose.yml`, `.dockerignore` — деплой через Docker.
+- `deploy/leadmagnet-bot.service` — systemd-юнит для VPS (автоперезапуск).
+- `DEPLOY.md` — инструкция по запуску 24/7 (Docker и systemd).
 - `CLAUDE.md` — этот файл.
 
 ## Как запустить локально
