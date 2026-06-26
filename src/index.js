@@ -18,8 +18,8 @@
 import { Bot, InlineKeyboard, webhookCallback } from "grammy";
 
 // ----------------------------- КОНФИГ -----------------------------
-const CHANNEL = "@sorokavmarketinge";
-const CHANNEL_URL = "https://t.me/sorokavmarketinge";
+const CHANNEL = "@karatsapov_test";
+const CHANNEL_URL = "https://t.me/karatsapov_test";
 
 // ----------------------------- ТЕКСТЫ (по ТЗ) -----------------------------
 const WELCOME_TEXT =
