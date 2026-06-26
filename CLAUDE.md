@@ -40,9 +40,10 @@
 ## Текущий статус
 - ✅ Telegram-бот готов и заполнен по ТЗ — `leadmagnet_bot.py` (aiogram 3.x).
 - ✅ Картинка приветствия — `welcome.jpg` подключена.
-- 🟡 Деплой (24/7) — готовы артефакты для автодеплоя из GitHub (`Dockerfile`,
-  `.dockerignore`, `DEPLOY.md`). Площадка: Python-PaaS (Timeweb Cloud / Amvera).
-  Осталось подключить репозиторий к хостингу и задать переменные окружения.
+- 🟡 Деплой (24/7) — выбран **Yandex Cloud (VM + GitHub Actions)**. Готовы `Dockerfile`,
+  `.dockerignore`, workflow `.github/workflows/deploy.yml` и инструкция `YANDEX_DEPLOY.md`.
+  Осталась разовая настройка Yandex Cloud (реестр, сервисные аккаунты, VM, секреты GitHub).
+  Альтернативы (Timeweb/Amvera) описаны в `DEPLOY.md`.
 - ⬜ MAX-версия — не начата (ограничения см. ниже).
 
 ## Файлы
@@ -52,6 +53,8 @@
 - `setup.sh` — настройка (venv + зависимости + `.env`).
 - `Dockerfile` + `.dockerignore` — сборка образа для автодеплоя на любой Docker-хостинг.
 - `DEPLOY.md` — инструкция по автодеплою из GitHub (Timeweb Cloud / Amvera).
+- `YANDEX_DEPLOY.md` + `.github/workflows/deploy.yml` — автодеплой на Yandex Cloud
+  (VM + GitHub Actions: сборка образа → Container Registry → перезапуск на VM).
 - `welcome.jpg` — картинка приветствия (1000×1000).
 
 ## Как запустить локально
