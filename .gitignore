@@ -2,3 +2,9 @@ venv/
 .env
 __pycache__/
 *.pyc
+
+# Node / Cloudflare Workers
+node_modules/
+.wrangler/
+.dev.vars
+npm-debug.log*

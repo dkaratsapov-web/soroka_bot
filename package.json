@@ -1,0 +1,17 @@
+{
+  "name": "marketing-guide-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Telegram lead-magnet bot on Cloudflare Workers (grammY)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "grammy": "^1.30.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

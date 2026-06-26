@@ -1,6 +1,7 @@
-name: Deploy to Yandex Cloud VM
+name: Deploy to Cloudflare Workers
 
-# Автодеплой: пуш в ветку -> сборка образа -> Yandex Container Registry -> перезапуск на VM.
+# Автодеплой: пуш в ветку -> сборка и публикация воркера на Cloudflare.
+# Также загружает секреты BOT_TOKEN и WEBHOOK_SECRET в воркер.
 on:
   push:
     branches: [ main, claude/affectionate-johnson-37hlcy ]
@@ -9,42 +10,26 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      IMAGE: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/soroka-bot
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login to Yandex Container Registry
-        # Логин по authorized-key сервисного аккаунта: username = json_key, password = содержимое ключа.
-        run: |
-          echo '${{ secrets.YC_SA_KEY }}' | docker login --username json_key --password-stdin cr.yandex
-
-      - name: Build image
-        run: |
-          docker build -t "$IMAGE:${{ github.sha }}" -t "$IMAGE:latest" .
-
-      - name: Push image
-        run: |
-          docker push "$IMAGE:${{ github.sha }}"
-          docker push "$IMAGE:latest"
-
-      - name: Deploy on VM over SSH
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          host: ${{ secrets.VM_SSH_HOST }}
-          username: ${{ secrets.VM_SSH_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
-          envs: IMAGE
-          script: |
-            set -e
-            # VM авторизуется в registry через привязанный сервисный аккаунт (configure-docker).
-            docker pull "$IMAGE:latest"
-            docker stop soroka-bot || true
-            docker rm soroka-bot || true
-            docker run -d \
-              --name soroka-bot \
-              --restart unless-stopped \
-              --env-file /opt/soroka_bot/.env \
-              "$IMAGE:latest"
-            docker image prune -f
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          secrets: |
+            BOT_TOKEN
+            WEBHOOK_SECRET
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}

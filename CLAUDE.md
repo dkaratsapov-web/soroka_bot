@@ -38,23 +38,37 @@
 Файл картинки заказчик пока не прислал — на этапе настройки запроси его и положи в проект.
 
 ## Текущий статус
-- ✅ Telegram-бот готов и заполнен по ТЗ — `leadmagnet_bot.py` (aiogram 3.x).
-- ✅ Картинка приветствия — `welcome.jpg` подключена.
-- 🟡 Деплой (24/7) — выбран **Yandex Cloud (VM + GitHub Actions)**. Готовы `Dockerfile`,
-  `.dockerignore`, workflow `.github/workflows/deploy.yml` и инструкция `YANDEX_DEPLOY.md`.
-  Осталась разовая настройка Yandex Cloud (реестр, сервисные аккаунты, VM, секреты GitHub).
-  Альтернативы (Timeweb/Amvera) описаны в `DEPLOY.md`.
+- ✅ **Активный (прод) бот — Cloudflare Workers**: `src/index.js` (grammY + webhook).
+  Хостинг бесплатный, автодеплой из GitHub. Инструкция — `CLOUDFLARE_DEPLOY.md`.
+- 🗄 Python-версия `leadmagnet_bot.py` (aiogram 3.x) сохранена как альтернатива для
+  Docker-хостинга (Timeweb/Amvera/Yandex). На Cloudflare НЕ используется.
+- ✅ Картинка приветствия — `welcome.jpg` (в `public/` отдаётся воркером).
+- 🟡 Деплой (24/7) — выбран **Cloudflare Workers**. Осталась разовая настройка:
+  аккаунт Cloudflare, секреты GitHub (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`,
+  `BOT_TOKEN`, `WEBHOOK_SECRET`) и регистрация webhook через `/init`.
 - ⬜ MAX-версия — не начата (ограничения см. ниже).
 
+> ВАЖНО: тексты/логика дублируются в `src/index.js` (прод) и `leadmagnet_bot.py` (альтернатива).
+> При правках держать их синхронными или менять прежде всего `src/index.js`.
+
 ## Файлы
-- `leadmagnet_bot.py` — основной бот, конфиг из `.env`, тексты по ТЗ.
-- `.env.example` — шаблон переменных (канал уже вписан). Реальный `.env` создаётся при настройке.
+### Прод (Cloudflare Workers)
+- `src/index.js` — бот на grammY (webhook), тексты по ТЗ.
+- `wrangler.toml` — конфиг воркера (имя, статика `public/`).
+- `package.json` — зависимости (`grammy`, `wrangler`).
+- `public/welcome.jpg` — картинка приветствия, отдаётся воркером.
+- `.github/workflows/deploy.yml` — автодеплой на Cloudflare.
+- `CLOUDFLARE_DEPLOY.md` — инструкция по настройке.
+
+### Альтернатива (Python / Docker-хостинг)
+- `leadmagnet_bot.py` — бот на aiogram, конфиг из `.env`.
+- `.env.example` — шаблон переменных. Реальный `.env` создаётся при настройке.
 - `requirements.txt` — `aiogram`, `python-dotenv`.
 - `setup.sh` — настройка (venv + зависимости + `.env`).
-- `Dockerfile` + `.dockerignore` — сборка образа для автодеплоя на любой Docker-хостинг.
-- `DEPLOY.md` — инструкция по автодеплою из GitHub (Timeweb Cloud / Amvera).
-- `YANDEX_DEPLOY.md` + `.github/workflows/deploy.yml` — автодеплой на Yandex Cloud
-  (VM + GitHub Actions: сборка образа → Container Registry → перезапуск на VM).
+- `Dockerfile` + `.dockerignore` — образ для Docker-хостинга.
+- `DEPLOY.md` — автодеплой на Timeweb Cloud / Amvera.
+- `YANDEX_DEPLOY.md` — автодеплой на Yandex Cloud (VM). NB: workflow в `deploy.yml`
+  сейчас настроен на Cloudflare; для Yandex-варианта см. историю git.
 - `welcome.jpg` — картинка приветствия (1000×1000).
 
 ## Как запустить локально
