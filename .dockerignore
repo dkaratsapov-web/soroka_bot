@@ -1,0 +1,11 @@
+# Что НЕ копировать в образ (чтобы был лёгким и без секретов).
+.git
+.gitignore
+venv/
+__pycache__/
+*.pyc
+.env
+*.zip
+DEPLOY.md
+CLAUDE.md
+setup.sh
