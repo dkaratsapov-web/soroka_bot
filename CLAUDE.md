@@ -8,14 +8,16 @@
 Делаем без платных конструкторов: бот простой и типовой.
 
 ## Текущий статус
-- ✅ **Telegram-бот готов** — `leadmagnet_bot.py` (фреймворк aiogram 3.x).
-  Логика: `/start` → проверка подписки через `getChatMember` → выдача материала.
-- 🟡 Деплой (запуск 24/7). ВАЖНО: РФ-хостинги (проверено на Reg.ru VPS) часто НЕ видят
-  `api.telegram.org` (тротлинг) — бот падает по таймауту. Рабочий путь — **Cloudflare
-  Workers** (webhook), см. `cloudflare/`. Docker/systemd-артефакты тоже готовы
-  (см. `DEPLOY.md`) — для площадок, где Telegram доступен.
-- ⬜ MAX-версия — не начата (есть важные ограничения, см. ниже). Планируется на
-  Reg.ru VPS (РФ-сеть видит `platform-api.max.ru`).
+- ✅ **Telegram-бот готов и развёрнут** — на **Cloudflare Workers** (`cloudflare/worker.js`,
+  webhook). Канал `@sorokavmarketinge`. Авто-деплой из GitHub (`main`). Python-версия
+  `leadmagnet_bot.py` (aiogram, long polling) остаётся как референс/для хостингов с
+  доступом к Telegram.
+- ✅ Деплой Telegram — на Cloudflare (РФ-VPS НЕ видят `api.telegram.org` из-за тротлинга;
+  проверено на Reg.ru). Docker/systemd-артефакты готовы (`DEPLOY.md`).
+- 🟡 **MAX-версия** — код готов (`max/max_bot.py`, библиотека `maxapi`). Проверка
+  подписки реализована через `get_chat_member`. Канал `https://max.ru/id773126457242_biz`.
+  Деплой — на Reg.ru VPS (long polling). Осталось задеплоить и протестировать.
+  Публикация — только от верифицированного юрлица/ИП РФ (см. ниже).
 
 ## Файлы
 - `leadmagnet_bot.py` — основной бот, конфиг читается из `.env`.
@@ -26,7 +28,9 @@
 - `deploy/leadmagnet-bot.service` — systemd-юнит для VPS (автоперезапуск).
 - `DEPLOY.md` — инструкция по запуску 24/7 (Docker и systemd).
 - `cloudflare/` — версия бота для Cloudflare Workers (webhook): `worker.js`,
-  `wrangler.toml`, `README.md`. Обходит РФ-блокировку Telegram, сервер не нужен.
+  `README.md`. `wrangler.toml` лежит в корне. Обходит РФ-блокировку Telegram.
+- `max/` — MAX-версия бота: `max_bot.py` (библиотека `maxapi`), `Dockerfile`,
+  `docker-compose.yml`, `.env.example`, `README.md`. Для Reg.ru VPS.
 - `CLAUDE.md` — этот файл.
 
 ## Как запустить локально

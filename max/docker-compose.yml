@@ -1,0 +1,13 @@
+# Запуск MAX-бота 24/7 на Reg.ru VPS (РФ-сеть видит platform-api.max.ru).
+#
+#   cp .env.example .env   # заполнить MAX_BOT_TOKEN и т.д.
+#   docker compose up -d --build
+#   docker compose logs -f
+#
+# restart: unless-stopped — поднимется после перезагрузки сервера и падений.
+services:
+  max-bot:
+    build: .
+    container_name: leadmagnet-max-bot
+    env_file: .env
+    restart: unless-stopped
