@@ -1,36 +1,40 @@
-# Бот на Cloudflare Workers (webhook)
+# Бот на Cloudflare Workers (webhook) — авто-деплой из GitHub
 
-Вариант запуска Telegram-бота без сервера. Подходит, когда хостинг не видит Telegram
-(например, РФ-VPS с тротлингом): сеть Cloudflare достучится до Telegram сама.
+Запуск Telegram-бота без сервера. Подходит, когда хостинг не видит Telegram
+(РФ-VPS с тротлингом): сеть Cloudflare достучится до Telegram сама.
+При каждом `git push` Cloudflare пересобирает и публикует воркер автоматически.
 
 Логика та же, что в Python-версии: `/start` → проверка подписки (`getChatMember`) →
 выдача материала; кнопка «Я подписался ✅» перепроверяет.
 
-## Деплой через панель Cloudflare (без командной строки)
+Файлы:
+- `cloudflare/worker.js` — код воркера.
+- `wrangler.toml` (в корне репозитория) — имя воркера, точка входа, несекретные переменные.
 
-1. Зарегистрируйся/войди на https://dash.cloudflare.com → раздел **Workers & Pages**.
-2. **Create application** → **Create Worker** → дай имя (например `leadmagnet-bot`) → **Deploy**.
-3. Открой созданный Worker → **Edit code** → удали шаблон, вставь содержимое `worker.js` → **Deploy**.
-4. Открой **Settings → Variables and Secrets** и добавь:
-   - `BOT_TOKEN` — тип **Secret** — токен от @BotFather
-   - `WEBHOOK_SECRET` — тип **Secret** — любая длинная строка (защита webhook)
-   - `CHANNEL` — `@sorokavmarketinge`
-   - `CHANNEL_URL` — `https://t.me/sorokavmarketinge`
-   - `LEAD_MAGNET_TEXT` — текст с материалом (например: `Спасибо за подписку! 🎉 Вот документ: clck.ru/3UJyuy`)
-   - (необязательно) `WELCOME_TEXT`, `NOT_SUBSCRIBED_TEXT`
-   Сохрани и снова **Deploy**.
-5. Привяжи webhook: открой в браузере **один раз**
-   `https://<имя-worker>.<твой-субдомен>.workers.dev/setup`
-   — должно вернуться `{"ok":true, ...}`.
-6. Сделай бота **администратором** канала `@sorokavmarketinge` (иначе проверка подписки не работает).
+## Деплой из GitHub (автоматический)
+
+1. https://dash.cloudflare.com → **Workers & Pages** → **Create** → **Import a repository**.
+2. Подключи GitHub и выбери репозиторий `soroka_bot`.
+3. Настройки сборки:
+   - **Build command** — оставить пустым;
+   - **Deploy command** — `npx wrangler deploy`;
+   - **Production branch** — ветка, где лежит код (`main`).
+4. **Deploy**. Cloudflare прочитает корневой `wrangler.toml` и опубликует воркер.
+5. **Settings → Variables and Secrets** — добавь секреты (в git их нет):
+   - `BOT_TOKEN` — тип **Secret** — токен от @BotFather;
+   - `WEBHOOK_SECRET` — тип **Secret** — любая длинная строка.
+   Несекретные `CHANNEL`, `CHANNEL_URL`, `LEAD_MAGNET_TEXT` уже заданы в `wrangler.toml`.
+6. Нажми **Retry deployment** (или сделай пустой commit), чтобы секреты применились.
+7. Привяжи webhook — открой один раз в браузере:
+   `https://leadmagnet-bot.<твой-субдомен>.workers.dev/setup` → ждём `{"ok":true,...}`.
+8. Сделай бота **администратором** канала `@sorokavmarketinge`.
+
+После этого каждый `git push` в ветку деплоя обновляет бота сам.
 
 ## Проверка
 - С аккаунта **без** подписки: `/start` → бот предлагает подписаться, материал НЕ присылает.
 - Подписаться → «Я подписался ✅» → приходит материал.
 
-## Деплой через Wrangler CLI (альтернатива)
-См. комментарии в `wrangler.toml`.
-
 ## Полезное
-- Снять/посмотреть webhook: `https://api.telegram.org/bot<ТОКЕН>/getWebhookInfo`
-- Логи Worker: в панели Cloudflare → Worker → **Logs** (Real-time).
+- Статус webhook: `https://api.telegram.org/bot<ТОКЕН>/getWebhookInfo`
+- Логи воркера: панель Cloudflare → Worker → **Logs** (Real-time).

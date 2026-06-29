@@ -1,0 +1,15 @@
+# Конфиг Cloudflare Worker (в корне репозитория — чтобы Cloudflare нашёл его при
+# авто-деплое из GitHub). Сам код воркера лежит в cloudflare/worker.js.
+#
+# Несекретные переменные — ниже в [vars]. Секреты (BOT_TOKEN, WEBHOOK_SECRET)
+# задаются в панели Cloudflare: Worker → Settings → Variables and Secrets → тип Secret.
+# Секреты в git НЕ коммитим.
+
+name = "leadmagnet-bot"
+main = "cloudflare/worker.js"
+compatibility_date = "2024-11-01"
+
+[vars]
+CHANNEL = "@sorokavmarketinge"
+CHANNEL_URL = "https://t.me/sorokavmarketinge"
+LEAD_MAGNET_TEXT = "Спасибо за подписку! 🎉 Вот твой эксклюзивный документ: clck.ru/3UJyuy — открывай и скачивай. Приятного изучения!"
