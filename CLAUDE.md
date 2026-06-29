@@ -10,9 +10,12 @@
 ## Текущий статус
 - ✅ **Telegram-бот готов** — `leadmagnet_bot.py` (фреймворк aiogram 3.x).
   Логика: `/start` → проверка подписки через `getChatMember` → выдача материала.
-- 🟡 Деплой (запуск 24/7) — артефакты готовы (Docker + systemd, см. `DEPLOY.md`),
-  осталось запустить на хосте с доступом к Telegram.
-- ⬜ MAX-версия — не начата (есть важные ограничения, см. ниже).
+- 🟡 Деплой (запуск 24/7). ВАЖНО: РФ-хостинги (проверено на Reg.ru VPS) часто НЕ видят
+  `api.telegram.org` (тротлинг) — бот падает по таймауту. Рабочий путь — **Cloudflare
+  Workers** (webhook), см. `cloudflare/`. Docker/systemd-артефакты тоже готовы
+  (см. `DEPLOY.md`) — для площадок, где Telegram доступен.
+- ⬜ MAX-версия — не начата (есть важные ограничения, см. ниже). Планируется на
+  Reg.ru VPS (РФ-сеть видит `platform-api.max.ru`).
 
 ## Файлы
 - `leadmagnet_bot.py` — основной бот, конфиг читается из `.env`.
@@ -22,6 +25,8 @@
 - `Dockerfile`, `docker-compose.yml`, `.dockerignore` — деплой через Docker.
 - `deploy/leadmagnet-bot.service` — systemd-юнит для VPS (автоперезапуск).
 - `DEPLOY.md` — инструкция по запуску 24/7 (Docker и systemd).
+- `cloudflare/` — версия бота для Cloudflare Workers (webhook): `worker.js`,
+  `wrangler.toml`, `README.md`. Обходит РФ-блокировку Telegram, сервер не нужен.
 - `CLAUDE.md` — этот файл.
 
 ## Как запустить локально
