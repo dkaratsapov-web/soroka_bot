@@ -31,8 +31,8 @@ load_dotenv()
 
 # ============================ CONFIG (из .env) ============================
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
-CHANNEL = os.getenv("CHANNEL", "@my_channel")
-CHANNEL_URL = os.getenv("CHANNEL_URL", "https://t.me/my_channel")
+CHANNEL = os.getenv("CHANNEL", "@sorokavmarketinge")
+CHANNEL_URL = os.getenv("CHANNEL_URL", "https://t.me/sorokavmarketinge")
 
 # Путь к файлу лид-магнита (необязательно). Пусто -> уйдёт только текст.
 LEAD_MAGNET_FILE = os.getenv("LEAD_MAGNET_FILE", "").strip() or None
