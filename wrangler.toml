@@ -5,7 +5,7 @@
 # задаются в панели Cloudflare: Worker → Settings → Variables and Secrets → тип Secret.
 # Секреты в git НЕ коммитим.
 
-name = "leadmagnet-bot"
+name = "soroka-bot"
 main = "cloudflare/worker.js"
 compatibility_date = "2024-11-01"
 
