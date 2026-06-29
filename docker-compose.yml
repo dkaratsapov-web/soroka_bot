@@ -1,0 +1,15 @@
+# Запуск бота 24/7 через Docker Compose.
+#
+#   1) Заполните .env (см. .env.example): BOT_TOKEN, CHANNEL, CHANNEL_URL, текст материала.
+#   2) docker compose up -d --build
+#   3) Логи:   docker compose logs -f
+#      Стоп:   docker compose down
+#
+# restart: unless-stopped — контейнер сам поднимется после перезагрузки хоста
+# или падения процесса.
+services:
+  bot:
+    build: .
+    container_name: leadmagnet-bot
+    env_file: .env
+    restart: unless-stopped
