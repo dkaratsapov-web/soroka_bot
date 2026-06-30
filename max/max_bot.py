@@ -126,7 +126,11 @@ async def on_callback(event: MessageCallback) -> None:
         return
     chat_id, user_id = event.get_ids()
     if await is_subscribed(user_id):
-        await bot.send_callback(callback_id=event.callback.callback_id)
+        # MAX требует, чтобы в ответе на callback был message или notification.
+        await bot.send_callback(
+            callback_id=event.callback.callback_id,
+            notification="Спасибо за подписку! Отправляю материал 👇",
+        )
         if chat_id is not None:
             await send_lead_magnet(chat_id)
         else:
