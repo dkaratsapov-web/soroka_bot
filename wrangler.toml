@@ -12,6 +12,6 @@ compatibility_date = "2024-11-01"
 [vars]
 CHANNEL = "@sorokavmarketinge"
 CHANNEL_URL = "https://t.me/sorokavmarketinge"
-LEAD_MAGNET_TEXT = "Спасибо за подписку! 🎉 Держи гайд «10 проверенных маркетинговых стратегий» — файл ниже 👇 Приятного изучения!"
+LEAD_MAGNET_TEXT = "Спасибо за подписку!\nДержи гайд «10 проверенных маркетинговых стратегий» — изучай, внедряй и повышай продажи!🔥"
 LEAD_MAGNET_FILE_URL = "https://raw.githubusercontent.com/dkaratsapov-web/soroka_bot/main/max/marketing-guide-2026.pdf"
 WELCOME_TEXT = "Привет! 👋\n\nДля получения гайда \"10 проверенных маркетинговых стратегий\" подпишись на канал \"Сорокин в Маркетинге\""
