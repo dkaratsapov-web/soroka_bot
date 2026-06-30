@@ -20,7 +20,13 @@ import os
 from dotenv import load_dotenv
 
 from maxapi import Bot, Dispatcher
-from maxapi.types import BotStarted, Command, MessageCallback, MessageCreated
+from maxapi.types import (
+    BotAdded,
+    BotStarted,
+    Command,
+    MessageCallback,
+    MessageCreated,
+)
 from maxapi.types.attachments.buttons import CallbackButton, LinkButton
 from maxapi.utils.inline_keyboard import InlineKeyboardBuilder
 
@@ -132,6 +138,25 @@ async def on_callback(event: MessageCallback) -> None:
         )
 
 
+@dp.bot_added()
+async def on_bot_added(event: BotAdded) -> None:
+    """Когда бота добавляют в канал/чат — печатаем chat_id и подхватываем его."""
+    global channel_id
+    kind = "канал" if event.is_channel else "чат"
+    logging.info(
+        "➡️  Бота добавили в %s. chat_id=%s. Если это нужный канал — впишите в .env "
+        "строку MAX_CHANNEL_ID=%s и перезапустите (чтобы сохранилось после рестарта).",
+        kind,
+        event.chat_id,
+        event.chat_id,
+    )
+    if channel_id is None and event.is_channel:
+        channel_id = event.chat_id
+        logging.info(
+            "CHANNEL_ID подхвачен автоматически из события добавления: %s", channel_id
+        )
+
+
 async def resolve_channel_id() -> None:
     """Определяет числовой ID канала из ссылки (если не задан явно)."""
     global channel_id
@@ -143,9 +168,9 @@ async def resolve_channel_id() -> None:
         channel_id = chat.chat_id
         logging.info("CHANNEL_ID из ссылки %s -> %s", MAX_CHANNEL_LINK, channel_id)
     except Exception as e:
-        logging.error(
-            "Не удалось получить ID канала по ссылке %s: %s. "
-            "Проверьте, что бот добавлен администратором канала и ссылка верна.",
+        logging.warning(
+            "ID канала по ссылке %s пока не получен (%s). Это нормально, если бот ещё "
+            "не добавлен в канал — добавьте его администратором, и chat_id определится.",
             MAX_CHANNEL_LINK,
             e,
         )
@@ -154,13 +179,12 @@ async def resolve_channel_id() -> None:
 async def main() -> None:
     await bot.delete_webhook()
     await resolve_channel_id()
-    # Диагностика: список чатов бота — помогает найти ID канала, если резолв не сработал.
-    try:
-        chats = await bot.get_chats(count=100)
-        for c in chats.chats:
-            logging.info("Чат бота: id=%s title=%r", c.chat_id, c.title)
-    except Exception as e:
-        logging.warning("Не удалось получить список чатов: %s", e)
+    if channel_id is None:
+        logging.warning(
+            "CHANNEL_ID пока не определён. Добавьте бота АДМИНИСТРАТОРОМ в канал %s — "
+            "бот поймает событие и напечатает chat_id (впишите его в MAX_CHANNEL_ID).",
+            MAX_CHANNEL_LINK,
+        )
     await dp.start_polling(bot)
 
 
