@@ -10,5 +10,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY max_bot.py .
+# Файл-лид-магнит (PDF), отдаётся подписчику.
+COPY marketing-guide-2026.pdf .
 
 CMD ["python", "max_bot.py"]

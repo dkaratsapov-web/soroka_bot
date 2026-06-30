@@ -20,10 +20,12 @@ import os
 from dotenv import load_dotenv
 
 from maxapi import Bot, Dispatcher
+from maxapi.enums.upload_type import UploadType
 from maxapi.types import (
     BotAdded,
     BotStarted,
     Command,
+    InputMedia,
     MessageCallback,
     MessageCreated,
 )
@@ -43,8 +45,12 @@ MAX_CHANNEL_ID = os.getenv("MAX_CHANNEL_ID", "").strip()
 
 LEAD_MAGNET_TEXT = os.getenv(
     "MAX_LEAD_MAGNET_TEXT",
-    "Спасибо за подписку! 🎉 Вот твой эксклюзивный документ: "
-    "clck.ru/3UJyuy — открывай и скачивай. Приятного изучения!",
+    "Спасибо за подписку! 🎉 Держи гайд «10 проверенных маркетинговых стратегий» — "
+    "файл ниже 👇 Приятного изучения!",
+)
+# Путь к файлу-лид-магниту внутри контейнера. Пусто -> уйдёт только текст.
+LEAD_MAGNET_FILE = (
+    os.getenv("MAX_LEAD_MAGNET_FILE", "marketing-guide-2026.pdf").strip() or None
 )
 WELCOME_TEXT = os.getenv(
     "MAX_WELCOME_TEXT",
@@ -90,6 +96,16 @@ async def is_subscribed(user_id: int) -> bool:
 
 
 async def send_lead_magnet(chat_id: int) -> None:
+    if LEAD_MAGNET_FILE:
+        try:
+            await bot.send_message(
+                chat_id=chat_id,
+                text=LEAD_MAGNET_TEXT,
+                attachments=[InputMedia(path=LEAD_MAGNET_FILE, type=UploadType.FILE)],
+            )
+            return
+        except Exception as e:
+            logging.error("Не удалось отправить файл, шлю только текст: %s", e)
     await bot.send_message(chat_id=chat_id, text=LEAD_MAGNET_TEXT)
 
 

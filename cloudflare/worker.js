@@ -69,10 +69,18 @@ async function isSubscribed(env, userId) {
 }
 
 async function sendLeadMagnet(env, chatId) {
-  await tg(env, "sendMessage", {
-    chat_id: chatId,
-    text: env.LEAD_MAGNET_TEXT || DEFAULTS.LEAD_MAGNET_TEXT,
-  });
+  const text = env.LEAD_MAGNET_TEXT || DEFAULTS.LEAD_MAGNET_TEXT;
+  // Если задан URL файла — шлём сам документ с подписью; иначе только текст.
+  if (env.LEAD_MAGNET_FILE_URL) {
+    const r = await tg(env, "sendDocument", {
+      chat_id: chatId,
+      document: env.LEAD_MAGNET_FILE_URL,
+      caption: text,
+    });
+    if (r && r.ok) return;
+    // Файл не ушёл (например, недоступен по URL) — фолбэк на текст.
+  }
+  await tg(env, "sendMessage", { chat_id: chatId, text });
 }
 
 async function handleUpdate(env, update) {
